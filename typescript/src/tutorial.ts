@@ -465,9 +465,9 @@ function getEmployee(): Person2 | DogOwner1 | Manager2 {
 function isManager(obj: Person2 | DogOwner1 | Manager2): obj is Manager2 {
   return 'managePeople' in obj
 }
-if (isManager(employee123)) {
-  employee123.delegateTask()
-}
+// if (isManager(employee123)) {
+//   employee123.delegateTask()
+// }
 // ! Tuples and Enums
 let person_john: [string, number] = ['john', 34]
 let person_john1: [string, number?] = ['john']
@@ -520,5 +520,150 @@ const x: Enum_User = {
   role: UserRole.Admin,
   contact: ['test@test.com', 90835667],
 }
-const a = createEnumUser(x)
-console.log(a)
+// const a = createEnumUser(x)
+// console.log(a)
+
+// ! Type assertion, Type Unknown and Type Never
+
+let someValue: any = 'This is the awesome string'
+let sLength = (someValue as string).length
+
+type Bird = {
+  name: string
+}
+let birdString = '{"name":"Eagle"}'
+let dogString = '{"breed":"Poodle"}'
+
+let birdObj = JSON.parse(birdString)
+let dogdObj = JSON.parse(dogString)
+
+let bird = birdObj as Bird
+let dog = dogdObj as Bird
+/*
+console.log(bird.name);
+* output : Eagle
+console.log(dog.name)
+*output : undefine
+*/
+enum Status {
+  Pending = 'Pending',
+  Declined = 'Declined',
+}
+
+type User_type_Assertion = {
+  name: string
+  status: Status
+}
+
+/*
+save Status.Pending in the db as string 
+retrieving from the database 
+*/
+const statusValue = 'pending'
+
+const user_t_a: User_type_Assertion = {
+  name: 'josh',
+  status: statusValue as Status,
+}
+
+// function runSomeCode() {
+//   const random = Math.random()
+//   if (random < 0.5) {
+//     throw new Error('something went wrong with the random number')
+//   } else {
+//     throw 'there was an error'
+//   }
+// }
+
+// try {
+//   runSomeCode()
+// } catch (error) {
+//   if (error instanceof Error) {
+//     console.log(error.message) // this type of Error
+//   } else {
+//     console.log(error) // this the type of unknown
+//     console.log('there was an error with the error block ')
+//   }
+// }
+
+// *Type Never
+
+type Theme = 'light' | 'dark'
+
+function checkTheme(theme: Theme) {
+  if (theme === 'light') {
+    console.log('light theme')
+    return
+  }
+  if (theme === 'dark') {
+    console.log('dark theme')
+    return
+  }
+  theme // never type
+}
+enum Color {
+  Red,
+  Blue,
+  Green,
+}
+function getTheColorName(color: Color) {
+  switch (color) {
+    case Color.Red:
+      return 'red'
+    case Color.Blue:
+      return 'Blue'
+    case Color.Green:
+      return 'Green'
+    default:
+      let unexpectedColor: never = color
+      throw new Error(`Unexpected color value: ${unexpectedColor}`)
+  }
+}
+
+// console.log(getTheColorName(Color.Blue))
+
+//! Modules - Global Scope "Gotcha"
+
+// If your TypeScript files aren't modules (i.e., they don't have any import or export statements), they're treated as scripts in the global scope. In this case, declaring the same variable in two different files would cause a conflict.
+/*
+!tutorial.ts
+
+let name = 'shakeAdnBake';
+
+const susan = 'susan';
+
+export let something = 'something';
+
+!actions.ts
+
+const susan = 'susan';
+
+export const something = 'something';
+
+!tsconfig.json
+
+"moduleDetection": "force",
+output
+tsconfig.json
+
+"module": "ESNext"
+*/
+
+//! Type Guarding Challenge
+
+type ValueType = string | number | boolean
+
+function checkTheValue(value: ValueType): ValueType {
+  return typeof value === 'string'
+    ? value.toLowerCase()
+    : typeof value === 'number'
+    ? value.toFixed(2)
+    : value + ''
+}
+// setInterval(() => {
+//   const random = Math.random()
+//   let value: ValueType
+//   value = random < 0.33 ? 'Hello' : random < 0.66 ? 123.456 : true
+//   let a = checkTheValue(value)
+//   console.log(a)
+// }, 100)
