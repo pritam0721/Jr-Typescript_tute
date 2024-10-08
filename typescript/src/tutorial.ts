@@ -847,3 +847,84 @@ let ram: Student_tc = {
 //   console.log(input.name);
 // }
 // printName(ram);
+// ! Fetch Api
+import { z } from 'zod';
+const url_fetch = 'https://www.course-api.com/react-tours-project';
+const tourSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  info: z.string(),
+  image: z.string(),
+  price: z.string(),
+});
+// type Tour = {
+//   id: string;
+//   name: string;
+//   info: string;
+//   image: string;
+//   price: string;
+// };
+type Tour = z.infer<typeof tourSchema>;
+async function someFetchFunction(url: string): Promise<Tour[]> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const rawData: Tour[] = await response.json();
+    const result = tourSchema.array().safeParse(rawData);
+    if (!result.success) {
+      throw new Error(`Invalid Data ${result.error}`);
+    }
+    return result.data;
+  } catch (error) {
+    const errorMsg =
+      error instanceof Error ? error.message : 'there was some error...';
+    console.log(errorMsg);
+    return [];
+  }
+}
+
+// const tours: Tour[] = await someFetchFunction(url_fetch);
+
+// tours.map((tour: Tour): void => {
+//   console.log(tour.name);
+// });
+
+// ! Classes
+class Book_Classes_In_TypeScript {
+  public readonly title: string;
+  public author: string;
+  private checkedOut: boolean = false;
+  constructor(title: string, author: string) {
+    this.title = title;
+    this.author = author;
+  }
+  public checkOut() {
+    this.checkedOut = true;
+  }
+  get info() {
+    return `the title of the book is ${this.title}, and the author is ${this.author}
+    `;
+  }
+}
+
+// const deepWork2 = new Book_Classes_In_TypeScript('deep work', 'cal newport');
+// deepWork2.checkOut();
+// console.log(deepWork2);
+
+interface IPerson {
+  name: string;
+  age: number;
+  greet(): void;
+}
+
+class Person_cl implements IPerson {
+  constructor(public name: string, public age: number) {}
+  greet(): void {
+    console.log(`Hello my name is ${this.name} and I'm ${this.age} years old`);
+  }
+}
+
+// const person_l = new Person_cl('slim shady ', 65);
+// console.log(person_l);
